@@ -55,7 +55,7 @@ def main():
             with st.spinner("Analyzing the topics and generating the summary"):
                 try:
                     response=requests.post(
-                        f"{BACKEND_URL}/generate-news-summary",
+                        f"{BACKEND_URL}/generate-news-audio",
                         json={
                             "topics":st.session_state.topics,
                             "source_type":source_type

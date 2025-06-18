@@ -9,7 +9,7 @@ from langgraph.prebuilt import create_react_agent
 from aiolimiter import AsyncLimiter
 from datetime import datetime, timedelta
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-from mcp.exceptions import MCPOverloadedError
+# from mcp.exceptions import MCPOverloadedError
 from langchain_groq import ChatGroq
 load_dotenv()
 
@@ -30,11 +30,9 @@ server_params = StdioServerParameters(
     args=["@brightdata/mcp"]
 )
 
-# Topic analysis with retries for overload errors
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=15, max=60),
-    retry=retry_if_exception_type(MCPOverloadedError),
     reraise=True
 )
 async def process_topic(agent, topic: str) -> str:

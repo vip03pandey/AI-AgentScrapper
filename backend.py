@@ -1,16 +1,17 @@
 from fastapi import FastAPI, HTTPException, Response
 from dotenv import load_dotenv
+load_dotenv()
+import os
 from pathlib import Path
 import logging
 
 from models import NewsRequest
 from news_scrapper import NewsScrapper
 from reddit_scrapper import scrape_reddit_topics
-from summary_generator import generate_broadcast_news  
-from elevenlabs_tts import text_to_audio_elevenlabs    
+from utils import generate_broadcast_news, text_to_audio_elevenlabs
+
 
 app = FastAPI()
-load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 @app.post("/generate-news-audio")
@@ -32,16 +33,17 @@ async def generate_news_audio(request: NewsRequest):
         news_data = results.get("news", {})
         reddit_data = results.get("reddit", {})
 
-        news_summary = generate_broadcast_news(
+        news_summary =generate_broadcast_news(
             news_data=news_data,
             reddit_data=reddit_data,
             topics=request.topics
         )
+        print("DEBUG: ELEVEN_LABS_API_KEY =", os.getenv("ELEVEN_LABS_API_KEY"))
 
         audio_path = text_to_audio_elevenlabs(
             text=news_summary,
-            voice_id="en-US-AriaNeural",
-            model_id="",
+            voice_id="21m00Tcm4TlvDq8ikWAM",
+            model_id="eleven_multilingual_v2",
             output_format="mp3",
             output_dir="audio"
         )
